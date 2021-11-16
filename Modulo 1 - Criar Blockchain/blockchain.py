@@ -54,6 +54,7 @@ class Blockchain:
     
     
 app = Flask(__name__)
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
 
 blockchain = Blockchain()
 
@@ -71,5 +72,23 @@ def mine_block():
                 'proof': block['proof'],
                 'previous_hash': block['previous_hash']}
     return jsonify(response), 200
+
+@app.route('/get_chain', methods = ['GET'])
+def get_chain():
+    response = {'chain': blockchain.chain,
+                'length': len(blockchain.chain)}
+    return jsonify(response), 200
+
+@app.route('/is_valid', methods = ['GET'])
+def is_valid():
+    is_valid = blockchain.is_chain_valid(blockchain.chain)
+    if is_valid:
+        response = {'message' : 'Tudo certo, o blockchain é valido.'}
+    else:
+        response = {'message' : 'O blockchain não é valido.'}
+    return jsonify(response), 200
+
+
+app.run(host= '0.0.0.0', port = 5000)
     
     
